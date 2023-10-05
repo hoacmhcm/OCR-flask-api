@@ -1,7 +1,5 @@
-flask
+Flask=2.3.3
 ultralytics
 numpy
-torch
-cv2
-os
 matplotlib
+Werkzeug=2.3.7
