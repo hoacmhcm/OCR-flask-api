@@ -1,0 +1,7 @@
+flask
+ultralytics
+numpy
+torch
+cv2
+os
+matplotlib
