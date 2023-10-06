@@ -1,50 +1,36 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, jsonify, request, render_template, redirect
+from flask_cors import CORS
 import os
-from werkzeug.utils import secure_filename
 
-#*** Backend operation
+app = Flask(__name__)
 
-# WSGI Application
-# Defining upload folder path
+# Initialize CORS extension with specific options
+cors = CORS(app, resources={r"/api/*": {"origins": "https://localhost:8080"}})
+
 UPLOAD_FOLDER = os.path.join('staticFiles', 'uploads')
-# # Define allowed files
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
-# Provide template folder name
-# The default folder name should be "templates" else need to mention custom folder name for template path
-# The default folder name for static files should be "static" else need to mention custom folder for static path
-app = Flask(__name__, template_folder='templateFiles', static_folder='staticFiles')
-# Configure upload folder for Flask application
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+@app.route("/api/upload-image", methods=["GET", "POST"])
+def upload_image():
+    if request.method == "POST":
+        if 'file' not in request.files:
+            return jsonify({'message': 'No file part'}), 400
 
-# Define secret key to enable session
-app.secret_key = 'This is your secret key to utilize session in Flask'
+        file = request.files['file']
 
 
-@app.route('/')
-def index():
-    return render_template('index_upload_and_show_data.html')
+        if file.filename == '':
+            return jsonify({'message': 'No selected file'}), 400
 
-@app.route('/',  methods=("POST", "GET"))
-def uploadFile():
-    if request.method == 'POST':
-        # Upload file flask
-        uploaded_img = request.files['uploaded-file']
-        # Extracting uploaded data file name
-        img_filename = secure_filename(uploaded_img.filename)
-        # Upload file to database (defined uploaded folder in static path)
-        uploaded_img.save(os.path.join(app.config['UPLOAD_FOLDER'], img_filename))
-        # Storing uploaded file path in flask session
-        session['uploaded_img_file_path'] = os.path.join(app.config['UPLOAD_FOLDER'], img_filename)
+        if request.files:
+            image = request.files["file"]
+            print(image)
+            image.save(os.path.join(app.config["UPLOAD_FOLDER"], image.filename))
+            return os.path.join(app.config["UPLOAD_FOLDER"], image.filename)
+    return render_template("upload_image.html")
 
-        return render_template('index_upload_and_show_data_page2.html')
 
-@app.route('/show_image')
-def displayImage():
-    # Retrieving uploaded file path from session
-    img_file_path = session.get('uploaded_img_file_path', None)
-    # Display image in Flask application web page
-    return render_template('show_image.html', user_image = img_file_path)
-
-if __name__=='__main__':
-    app.run(debug = True)
+if __name__ == '__main__':
+    app.run(port=4000, debug=True)

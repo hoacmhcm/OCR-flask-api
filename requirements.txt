@@ -3,3 +3,7 @@ ultralytics
 numpy
 matplotlib
 Werkzeug=2.3.7
+Flask-CORS
+vietocr
+opencv-python==4.8.1.78
+pillow
