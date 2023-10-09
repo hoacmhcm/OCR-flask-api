@@ -1,5 +1,3 @@
-import numpy as np
-import scipy.spatial.distance as distance
 import torch
 
 def convert_yolo_to_list(yolo_tensor):

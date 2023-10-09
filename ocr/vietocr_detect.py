@@ -40,12 +40,11 @@ def perform_ocr_and_combine_text_for_sorted_images(folder_path):
 
     for filename in image_files:
         image_path = os.path.join(folder_path, filename)
-        print(image_path)
         text = perform_ocr(image_path)  # Assuming perform_ocr is defined elsewhere
         if text:
             recognized_text.append(text)
         # Delete the image file after OCR
-        os.remove(image_path)
+        # os.remove(image_path)
 
     paragraph = " ".join(recognized_text)
     return paragraph

@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
-from sort_bounding_boxes import convert_yolo_to_list, sorting_yolo_bounding_boxes, convert_list_to_yolo
-from save_image import write_image_to_output
-from detect import run_yolo_inference
+from detection.sort_bounding_boxes import convert_yolo_to_list, sorting_yolo_bounding_boxes, convert_list_to_yolo
+from detection.save_image import write_image_to_output
+from detection.detect import run_yolo_inference
 
 
 def process_bounding_boxes(results, original_image_url, max_boxes_per_image=10, spacing=10, output_dir=None):
@@ -90,14 +90,14 @@ def process_bounding_boxes(results, original_image_url, max_boxes_per_image=10, 
         # If the maximum boxes per image is reached, save the current image
         if current_box_index == max_boxes_per_image:
             if output_dir:
-                write_image_to_output(current_image_index, current_image)
+                write_image_to_output(current_image_index, current_image, output_dir)
                 current_image_index += 1
 
     # Save the last image if needed (in case it doesn't reach the maximum)
     if current_box_index > 0 and current_box_index != max_boxes_per_image and output_dir:
-        write_image_to_output(current_image_index, current_image)
+        write_image_to_output(current_image_index, current_image, output_dir)
 
 
-results = run_yolo_inference('model.pt', 'paragraph_2_300.png')
-# Example usage:
-process_bounding_boxes(results, 'paragraph_2_300.png', max_boxes_per_image=10, spacing=10, output_dir='/path/to/output')
+# results = run_yolo_inference('model/model.pt', 'img.png')
+# # # Example usage:
+# process_bounding_boxes(results, 'img.png', max_boxes_per_image=10, spacing=10, output_dir='/path/to/output')
