@@ -7,12 +7,13 @@ import os
 
 def perform_ocr(image_path):
     # Load the configuration
-    config = Cfg.load_config_from_name('vgg_transformer')
+    config = Cfg.load_config_from_name('vgg_seq2seq')
 
     # Modify configuration settings
     config['cnn']['pretrained'] = False
     # config['device'] = 'cuda:0'
     config['device'] = 'cpu'
+    config['predictor']['beamsearch'] = False
 
     # Initialize the OCR detector
     detector = Predictor(config)
@@ -30,6 +31,7 @@ def perform_ocr(image_path):
     return result
 
 def list_and_sort_image_files(folder_path):
+    print(folder_path)
     # List the image files in the folder and sort them by name (ascending order)
     image_files = sorted([f for f in os.listdir(folder_path) if f.endswith(".jpg")], key=lambda x: int(x.split('_')[1].split('.')[0]))
     return image_files
@@ -50,7 +52,12 @@ def perform_ocr_and_combine_text_for_sorted_images(folder_path):
     return paragraph
 
 # Usage:
-# folder_path = '/content/output/'
-# combined_text = perform_ocr_and_combine_text_for_sorted_images(folder_path)
+# PROCESS_FOLDER = os.path.join('../staticFiles', 'test')
+# image_files = os.listdir(PROCESS_FOLDER)
+# print(image_files)
+# image_path = os.path.join(PROCESS_FOLDER, image_files[0])
+# combined_text = perform_ocr(image_path)
 # print(combined_text)
+
+
 

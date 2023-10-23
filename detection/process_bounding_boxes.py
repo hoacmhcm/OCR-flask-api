@@ -51,7 +51,7 @@ def process_bounding_boxes(results, original_image_url, max_boxes_per_image=10, 
         # If a new image needs to be created or the maximum boxes per image is reached
         if current_image is None or current_box_index == max_boxes_per_image:
             current_box_index = 0
-            current_x = 0
+            current_x = 10
 
             # Create a new image with white background
             new_image_height = height + 2 * spacing
