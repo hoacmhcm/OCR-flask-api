@@ -1,8 +1,8 @@
-Flask=2.3.3
+Flask==2.3.3
 ultralytics
 numpy
 matplotlib
-Werkzeug=2.3.7
+Werkzeug==2.3.7
 Flask-CORS
 vietocr
 opencv-python==4.8.1.78
