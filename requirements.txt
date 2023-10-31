@@ -1,10 +1,10 @@
 Flask==2.2.2
-ultralytics
-numpy
-matplotlib
+ultralytics==8.0.193
+numpy==1.26.0
+matplotlib==3.8.0
 Werkzeug==2.2.3
-Flask-CORS
-vietocr
+Flask-CORS==3.0.10
+vietocr==0.3.11
 opencv-python==4.8.1.78
 pillow
-gunicorn
+gunicorn==20.1.0
