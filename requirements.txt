@@ -1,5 +1,5 @@
 Flask==2.2.2
-ultralytics==8.0.199
+ultralytics==8.0.203
 numpy==1.26.0
 matplotlib==3.8.0
 Werkzeug==2.2.3
