@@ -7,7 +7,7 @@ import os
 
 def perform_ocr(image_path):
     # Load the configuration
-    config = Cfg.load_config_from_name('vgg_seq2seq')
+    config = Cfg.load_config_from_name('vgg_transformer')
 
     # Modify configuration settings
     config['cnn']['pretrained'] = False
