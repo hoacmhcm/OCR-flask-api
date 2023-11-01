@@ -3,3 +3,4 @@ flask-cors
 ultralytics
 vietocr==0.3.11
 Pillow==9.5.0
+gunicorn==21.2.0
