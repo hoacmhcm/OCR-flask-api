@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 from detection.sort_bounding_boxes import convert_yolo_to_list, sorting_yolo_bounding_boxes, convert_list_to_yolo
 from detection.save_image import write_image_to_output
-from detection.detect import run_yolo_inference
 
 
 def process_bounding_boxes(results, original_image_url, max_boxes_per_image=10, spacing=10, output_dir=None):
