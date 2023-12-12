@@ -6,7 +6,6 @@ from detection.process_bounding_boxes import process_bounding_boxes
 from ocr.vietocr_detect import perform_ocr_and_combine_text_for_sorted_images, load_vietocr_model
 from utils.utils_function import remove_images_from_folder
 
-
 app = Flask(__name__)
 
 model_folder = os.path.join('detection', 'model')
@@ -17,7 +16,11 @@ yolo_model = load_yolo_model(model_file_path)
 detector = load_vietocr_model()
 
 # Initialize CORS extension with specific options
-cors = CORS(app, resources={r"/api/*": {"origins": "https://localhost:8080"}})
+cors = CORS(app, resources={
+    r"/api/*": {
+        "origins": ["https://localhost:8080", "https://jitsi-hoacm2.dedyn.io"]
+    }
+})
 
 UPLOAD_FOLDER = os.path.join('staticFiles', 'uploads')
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
