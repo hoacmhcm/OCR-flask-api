@@ -59,9 +59,9 @@ def upload_image():
         return jsonify({'message': 'No selected file'}), 400
 
     # Extract the string data from the form
-    name = request.form.get('name', '')
-    if not name:
-        return 'No name provided', 400
+    # name = request.form.get('name', '')
+    # if not name:
+    #     return 'No name provided', 400
 
     uid = request.form.get('uid', '')
     if not uid:
