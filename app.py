@@ -1,4 +1,5 @@
 import os
+import logging
 from flask import Flask, jsonify, request, render_template, redirect
 from flask_cors import CORS
 from detection.detect import run_yolo_inference, load_yolo_model
@@ -22,10 +23,33 @@ cors = CORS(app, resources={
     }
 })
 
+# Configure logging to write to a file with timestamps and log levels
+log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+file_handler = logging.FileHandler('log_module.txt')
+file_handler.setFormatter(log_formatter)
+app.logger.addHandler(file_handler)
+app.logger.setLevel(logging.INFO)
+
 UPLOAD_FOLDER = os.path.join('staticFiles', 'uploads')
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+
+# Log all requests
+@app.after_request
+def after_request(response):
+    log_message = f"{request.method} {request.url} {response.status_code}"
+    app.logger.info(log_message)
+    return response
+
+
+# Log errors
+@app.errorhandler(Exception)
+def log_error(error):
+    log_message = f"Internal Server Error: {str(error)}"
+    app.logger.error(log_message)
+    return jsonify({"error": "Internal Server Error"}), 500
 
 
 @app.route("/api/test", methods=["GET"])
