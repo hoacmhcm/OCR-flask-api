@@ -6,6 +6,7 @@ from detection.detect import run_yolo_inference, load_yolo_model
 from detection.process_bounding_boxes import process_bounding_boxes
 from ocr.vietocr_detect import perform_ocr_and_combine_text_for_sorted_images, load_vietocr_model
 from utils.utils_function import remove_images_from_folder
+import time
 
 app = Flask(__name__)
 
@@ -103,6 +104,8 @@ def upload_image():
         image_path = os.path.join(UPLOAD_FOLDER, image_files[0])
 
         output_dir = os.path.join('staticFiles', 'process_bounding_boxes')
+        # Start the timer
+        start_time = time.time()
 
         results = run_yolo_inference(yolo_model, image_path, save=False)
 
@@ -110,6 +113,13 @@ def upload_image():
                                output_dir=output_dir)
 
         combined_text = perform_ocr_and_combine_text_for_sorted_images(output_dir, detector)
+        # Stop the timer
+        end_time = time.time()
+
+        # Calculate the elapsed time
+        elapsed_time = end_time - start_time
+
+        print(f"OCR time: {elapsed_time} seconds")
         remove_images_from_folder(UPLOAD_FOLDER)
         remove_images_from_folder(output_dir)
         # print(combined_text)
