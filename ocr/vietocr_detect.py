@@ -8,12 +8,13 @@ import os
 
 def load_vietocr_model():
     # Load the configuration
-    config = Cfg.load_config_from_name('vgg_transformer')
+    # config = Cfg.load_config_from_name('vgg_transformer')
+    config = Cfg.load_config_from_name('vgg_seq2seq')
 
     # Modify configuration settings
     config['cnn']['pretrained'] = False
-    # config['device'] = 'cuda:0'
-    config['device'] = 'cpu'
+    config['device'] = 'cuda:0'
+    #config['device'] = 'cpu'
     config['predictor']['beamsearch'] = False
 
     # Initialize the OCR detector
