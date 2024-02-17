@@ -1,4 +1,5 @@
 import os
+import shutil
 
 
 def remove_images_from_folder(directory):
@@ -9,7 +10,7 @@ def remove_images_from_folder(directory):
                 os.unlink(file_path)
             elif os.path.isdir(file_path):
                 # If you also want to remove directories, uncomment the following line
-                # shutil.rmtree(file_path)
+                shutil.rmtree(file_path)
                 pass
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))

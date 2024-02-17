@@ -7,8 +7,9 @@ def load_yolo_model(model_path):
     return model
 
 
-def run_yolo_inference(model, image_path, img_size=640, confidence=0.6, iou_threshold=0.5, save=False):
+def run_yolo_inference(model, image_path, img_size=640, confidence=0.6, iou_threshold=0.5, save=False, show=False):
     # Run inference on the specified image
-    results = model.predict(image_path, imgsz=img_size, conf=confidence, iou=iou_threshold, save=save)
+    results = model.predict(image_path, imgsz=img_size, conf=confidence, iou=iou_threshold, save=save, show_conf=True,
+                            show_labels=False)
 
     return results

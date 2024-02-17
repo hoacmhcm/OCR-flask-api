@@ -7,6 +7,7 @@ from detection.process_bounding_boxes import process_bounding_boxes
 from ocr.vietocr_detect import perform_ocr_and_combine_text_for_sorted_images, load_vietocr_model
 from utils.utils_function import remove_images_from_folder
 import time
+import requests
 
 app = Flask(__name__)
 
@@ -31,7 +32,11 @@ file_handler.setFormatter(log_formatter)
 app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.INFO)
 
+# api_url = 'http://localhost:5000/api/store-info'
+api_url = 'https://store-ocr-info-flask-api.onrender.com/api/store-info'
+
 UPLOAD_FOLDER = os.path.join('staticFiles', 'uploads')
+YOLO_OUTPUT_FOLDER = os.path.join('runs', 'detect', 'predict')
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -61,7 +66,9 @@ def test():
 
     output_dir = os.path.join('staticFiles', 'process_bounding_boxes')
 
-    results = run_yolo_inference(yolo_model, image_path)
+    results = run_yolo_inference(yolo_model, image_path, save=True, show=True)
+
+    print(results)
 
     process_bounding_boxes(results, image_path, max_boxes_per_image=10, spacing=10,
                            output_dir=output_dir)
@@ -69,14 +76,16 @@ def test():
     combined_text = perform_ocr_and_combine_text_for_sorted_images(output_dir, detector)
     print(combined_text)
     # Delete the image file after OCR
-    os.remove(image_path)
-    remove_images_from_folder(output_dir)
+    # os.remove(image_path)
+    # remove_images_from_folder(output_dir)
 
     return combined_text
 
 
 @app.route("/api/upload-image", methods=["POST"])
 def upload_image():
+    output_dir = os.path.join('staticFiles', 'process_bounding_boxes')
+
     # Check if the post request has the file part
     if 'file' not in request.files:
         return 'No file part', 400
@@ -105,11 +114,17 @@ def upload_image():
         image_files = os.listdir(UPLOAD_FOLDER)
         image_path = os.path.join(UPLOAD_FOLDER, image_files[0])
 
-        output_dir = os.path.join('staticFiles', 'process_bounding_boxes')
         # Start the timer
         start_time = time.time()
 
-        results = run_yolo_inference(yolo_model, image_path, save=False)
+        results = run_yolo_inference(yolo_model, image_path, save=True)
+
+        yolo_output_path = None
+        # Process results list
+        for result in results:
+            yolo_output_path = result.save_dir
+
+        print(yolo_output_path)
 
         process_bounding_boxes(results, image_path, max_boxes_per_image=10, spacing=10,
                                output_dir=output_dir)
@@ -121,10 +136,33 @@ def upload_image():
         # Calculate the elapsed time
         elapsed_time = end_time - start_time
 
+        # Prepare the data
+        data = {
+            'name': name,
+            'room_name': roomName,
+            'session_id': sessionId,
+            'ocr_time': elapsed_time,
+            'ocr_result': combined_text,
+        }
+
+        print(yolo_output_path)
+
+        yolo_output_file = os.listdir(yolo_output_path)
+        yolo_output_file_path = os.path.join(yolo_output_path, yolo_output_file[0])
+
+        # Prepare the files
+        files = {
+            'originImage': ('origin_image.png', open(image_path, 'rb')),
+            'yoloImage': ('yolo_image.png', open(yolo_output_file_path, 'rb')),
+            # 'processImage': ('process_image.jpg', open(process_image_path, 'rb')),
+        }
+
+        response = requests.post(api_url, data=data, files=files)
+
         print(f"OCR time: {elapsed_time} seconds")
         remove_images_from_folder(UPLOAD_FOLDER)
         remove_images_from_folder(output_dir)
-        # print(combined_text)
+        print(combined_text)
         return combined_text
 
 
