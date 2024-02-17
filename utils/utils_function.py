@@ -18,6 +18,7 @@ def remove_images_from_folder(directory):
 
 def list_and_sort_image_files(folder_path):
     # List the image files in the folder and sort them by name (ascending order)
-    image_files = sorted([f for f in os.listdir(folder_path) if f.endswith(".jpg")],
+    image_files = sorted([f for f in os.listdir(folder_path) if f.endswith(".jpg") or f.endswith(".png")],
                          key=lambda x: int(x.split('_')[1].split('.')[0]))
+
     return image_files
